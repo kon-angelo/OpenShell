@@ -114,6 +114,11 @@ server:
   # Linux 5.12+. When enabled, container UID 0 maps to an unprivileged host
   # UID and capabilities become namespaced.
   enableUserNamespaces: false
+  # Storage class to use for workspace PVCs. Empty string means the cluster
+  # default storage class is used.
+  workspaceStorageClass: ""
+  # Default storage size for workspace PVCs (e.g. "2Gi", "10Gi").
+  workspaceDefaultStorageSize: ""
   # Disable TLS entirely — the server listens on plaintext HTTP.
   # Set to true when a reverse proxy / tunnel terminates TLS at the edge.
   disableTls: false

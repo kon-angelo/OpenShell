@@ -10,8 +10,8 @@ use tracing_subscriber::EnvFilter;
 use openshell_core::VERSION;
 use openshell_core::proto::compute::v1::compute_driver_server::ComputeDriverServer;
 use openshell_driver_kubernetes::{
-    ComputeDriverService, KubernetesComputeConfig, KubernetesComputeDriver,
-    SupervisorSideloadMethod,
+    ComputeDriverService, DEFAULT_WORKSPACE_STORAGE_SIZE, KubernetesComputeConfig,
+    KubernetesComputeDriver, SupervisorSideloadMethod,
 };
 
 #[derive(Parser, Debug)]
@@ -68,6 +68,12 @@ struct Args {
 
     #[arg(long, env = "OPENSHELL_ENABLE_USER_NAMESPACES")]
     enable_user_namespaces: bool,
+
+    #[arg(long, env = "OPENSHELL_K8S_WORKSPACE_STORAGE_CLASS")]
+    workspace_storage_class: Option<String>,
+
+    #[arg(long, env = "OPENSHELL_K8S_WORKSPACE_DEFAULT_STORAGE_SIZE")]
+    workspace_default_storage_size: Option<String>,
 }
 
 #[tokio::main]
@@ -93,6 +99,10 @@ async fn main() -> Result<()> {
         client_tls_secret_name: args.client_tls_secret_name.unwrap_or_default(),
         host_gateway_ip: args.host_gateway_ip.unwrap_or_default(),
         enable_user_namespaces: args.enable_user_namespaces,
+        workspace_storage_class: args.workspace_storage_class.unwrap_or_default(),
+        workspace_default_storage_size: args
+            .workspace_default_storage_size
+            .unwrap_or_else(|| DEFAULT_WORKSPACE_STORAGE_SIZE.to_string()),
     })
     .await
     .into_diagnostic()?;
